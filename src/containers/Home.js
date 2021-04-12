@@ -4,28 +4,31 @@ import Form from "react-bootstrap/Form";
 import Button from "react-bootstrap/Button";
 
 export default function Home() {
-  const [fileContents, setFileContents] = useState("");
+  const [fileContents, setFileContents] = useState(undefined);
 
-  function getFileContents(file) {
+  function getFileContents(event) {
     console.log("file contents");
+
+    var file = event.target.files[0];
     console.log(file);
-    setFileContents("new front end contents");
+
+    setFileContents(file);
   }
 
-  function uploadFile() {
-    if (fileContents === "") {
+  async function uploadFile() {
+    if (fileContents === undefined) {
       alert("Please select a file");
     } else {
+      let formData = new FormData();
+      formData.append("customFile", fileContents);
       const url =
         "https://5t2a58gtd1.execute-api.us-east-1.amazonaws.com/dev/uploader";
-      fetch(url, {
+      await fetch(url, {
         method: "POST",
-        headers: {
-          Accept: "application/json",
-          "Content-Type": "application/json",
-        },
-        body: fileContents,
+        body: formData,
       });
+
+      console.log("uploaded");
     }
   }
 
